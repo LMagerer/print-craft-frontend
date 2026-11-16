@@ -1,0 +1,358 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "size": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "print_size_only",
+          "enum": [
+            "print_size_only",
+            "resample",
+            "crop_fit"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "width_mm": {
+          "default": 85.6,
+          "exclusiveMinimum": 0,
+          "maximum": 2000,
+          "title": "Width Mm",
+          "type": "number"
+        },
+        "height_mm": {
+          "default": 54.0,
+          "exclusiveMinimum": 0,
+          "maximum": 2000,
+          "title": "Height Mm",
+          "type": "number"
+        },
+        "dpi": {
+          "default": 300,
+          "exclusiveMinimum": 0,
+          "maximum": 4800,
+          "title": "Dpi",
+          "type": "number"
+        },
+        "bleed_mm": {
+          "default": 0,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Bleed Mm",
+          "type": "number"
+        }
+      },
+      "title": "SizeConfig",
+      "type": "object",
+      "default": {}
+    },
+    "placeholders": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "default": "",
+            "title": "Label",
+            "type": "string"
+          },
+          "binding": {
+            "additionalProperties": false,
+            "description": "``field``: value of one data column. ``template``: text with ``{{field}}`` tokens.",
+            "properties": {
+              "mode": {
+                "default": "field",
+                "enum": [
+                  "field",
+                  "template"
+                ],
+                "title": "Mode",
+                "type": "string"
+              },
+              "field": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Field"
+              },
+              "template": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Template"
+              }
+            },
+            "title": "Binding",
+            "type": "object",
+            "default": {}
+          },
+          "x_mm": {
+            "title": "X Mm",
+            "type": "number"
+          },
+          "y_mm": {
+            "title": "Y Mm",
+            "type": "number"
+          },
+          "box": {
+            "additionalProperties": false,
+            "properties": {
+              "width_mm": {
+                "exclusiveMinimum": 0,
+                "title": "Width Mm",
+                "type": "number"
+              },
+              "height_mm": {
+                "exclusiveMinimum": 0,
+                "title": "Height Mm",
+                "type": "number"
+              }
+            },
+            "required": [
+              "width_mm",
+              "height_mm"
+            ],
+            "title": "Box",
+            "type": "object"
+          },
+          "align": {
+            "default": "left",
+            "enum": [
+              "left",
+              "center",
+              "right"
+            ],
+            "title": "Align",
+            "type": "string"
+          },
+          "valign": {
+            "default": "top",
+            "enum": [
+              "top",
+              "middle",
+              "bottom"
+            ],
+            "title": "Valign",
+            "type": "string"
+          },
+          "font": {
+            "additionalProperties": false,
+            "properties": {
+              "font_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Font Id"
+              },
+              "size_pt": {
+                "default": 12,
+                "exclusiveMinimum": 0,
+                "maximum": 1000,
+                "title": "Size Pt",
+                "type": "number"
+              },
+              "color": {
+                "default": "#000000",
+                "title": "Color",
+                "type": "string"
+              },
+              "auto_shrink": {
+                "default": true,
+                "title": "Auto Shrink",
+                "type": "boolean"
+              },
+              "min_size_pt": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": 6,
+                "title": "Min Size Pt"
+              },
+              "wrap": {
+                "default": false,
+                "title": "Wrap",
+                "type": "boolean"
+              },
+              "letter_spacing": {
+                "default": 0,
+                "title": "Letter Spacing",
+                "type": "number"
+              },
+              "line_height": {
+                "default": 1.2,
+                "exclusiveMinimum": 0,
+                "maximum": 10,
+                "title": "Line Height",
+                "type": "number"
+              },
+              "transform": {
+                "default": "none",
+                "enum": [
+                  "none",
+                  "uppercase",
+                  "lowercase",
+                  "capitalize"
+                ],
+                "title": "Transform",
+                "type": "string"
+              },
+              "bold": {
+                "default": false,
+                "title": "Bold",
+                "type": "boolean"
+              },
+              "italic": {
+                "default": false,
+                "title": "Italic",
+                "type": "boolean"
+              },
+              "stroke_width_pt": {
+                "default": 0,
+                "minimum": 0,
+                "title": "Stroke Width Pt",
+                "type": "number"
+              },
+              "stroke_color": {
+                "default": "#000000",
+                "title": "Stroke Color",
+                "type": "string"
+              },
+              "shadow": {
+                "additionalProperties": false,
+                "properties": {
+                  "enabled": {
+                    "default": false,
+                    "title": "Enabled",
+                    "type": "boolean"
+                  },
+                  "color": {
+                    "default": "#00000080",
+                    "title": "Color",
+                    "type": "string"
+                  },
+                  "offset_x_mm": {
+                    "default": 0.3,
+                    "title": "Offset X Mm",
+                    "type": "number"
+                  },
+                  "offset_y_mm": {
+                    "default": 0.3,
+                    "title": "Offset Y Mm",
+                    "type": "number"
+                  },
+                  "blur_mm": {
+                    "default": 0.3,
+                    "title": "Blur Mm",
+                    "type": "number"
+                  }
+                },
+                "title": "Shadow",
+                "type": "object",
+                "default": {}
+              },
+              "fallback_font_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Fallback Font Id"
+              }
+            },
+            "title": "FontConfig",
+            "type": "object",
+            "default": {}
+          },
+          "sample_text": {
+            "default": "",
+            "title": "Sample Text",
+            "type": "string"
+          },
+          "locked": {
+            "default": false,
+            "title": "Locked",
+            "type": "boolean"
+          },
+          "hidden": {
+            "default": false,
+            "title": "Hidden",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "x_mm",
+          "y_mm",
+          "box"
+        ],
+        "title": "Placeholder",
+        "type": "object"
+      },
+      "title": "Placeholders",
+      "type": "array",
+      "default": []
+    },
+    "output": {
+      "additionalProperties": false,
+      "properties": {
+        "filename_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename Field"
+        },
+        "format": {
+          "const": "png",
+          "default": "png",
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "title": "OutputConfig",
+      "type": "object",
+      "default": {}
+    }
+  },
+  "title": "TemplateConfig",
+  "type": "object"
+}

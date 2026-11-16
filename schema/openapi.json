@@ -1,0 +1,4064 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PrintCraft API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/templates": {
+      "get": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "List Templates",
+        "operationId": "list_templates_api_v1_templates_get",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "name",
+                "created_at",
+                "updated_at"
+              ],
+              "type": "string",
+              "default": "updated_at",
+              "title": "Sort"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string",
+              "default": "desc",
+              "title": "Order"
+            }
+          },
+          {
+            "name": "archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "exclude",
+                "include",
+                "only"
+              ],
+              "type": "string",
+              "default": "exclude",
+              "title": "Archived"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplateSummary"
+                  },
+                  "title": "Response List Templates Api V1 Templates Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Create Template",
+        "operationId": "create_template_api_v1_templates_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/import": {
+      "post": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Import Template",
+        "operationId": "import_template_api_v1_templates_import_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_template_api_v1_templates_import_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{template_id}": {
+      "get": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Get Template",
+        "operationId": "get_template_api_v1_templates__template_id__get",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Update Template",
+        "operationId": "update_template_api_v1_templates__template_id__put",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Delete Template",
+        "operationId": "delete_template_api_v1_templates__template_id__delete",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{template_id}/duplicate": {
+      "post": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Duplicate Template",
+        "operationId": "duplicate_template_api_v1_templates__template_id__duplicate_post",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/DuplicateRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{template_id}/versions": {
+      "get": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "List Versions",
+        "operationId": "list_versions_api_v1_templates__template_id__versions_get",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemplateVersionOut"
+                  },
+                  "title": "Response List Versions Api V1 Templates  Template Id  Versions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{template_id}/restore/{version}": {
+      "post": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Restore Version",
+        "operationId": "restore_version_api_v1_templates__template_id__restore__version__post",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{template_id}/image": {
+      "get": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Template Image",
+        "operationId": "template_image_api_v1_templates__template_id__image_get",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{template_id}/export": {
+      "get": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Export Template",
+        "operationId": "export_template_api_v1_templates__template_id__export_get",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets": {
+      "get": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "List Datasets",
+        "description": "All uploaded datasets, newest first, with the templates linked to each.",
+        "operationId": "list_datasets_api_v1_datasets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DatasetOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Datasets Api V1 Datasets Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Create Dataset",
+        "operationId": "create_dataset_api_v1_datasets_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_dataset_api_v1_datasets_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets/{dataset_id}": {
+      "get": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Get Dataset",
+        "operationId": "get_dataset_api_v1_datasets__dataset_id__get",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Delete Dataset",
+        "operationId": "delete_dataset_api_v1_datasets__dataset_id__delete",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets/{dataset_id}/records": {
+      "get": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Get Records",
+        "operationId": "get_records_api_v1_datasets__dataset_id__records_get",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordsPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets/{dataset_id}/validate": {
+      "post": {
+        "tags": [
+          "datasets"
+        ],
+        "summary": "Validate Dataset",
+        "operationId": "validate_dataset_api_v1_datasets__dataset_id__validate_post",
+        "parameters": [
+          {
+            "name": "dataset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dataset Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images": {
+      "post": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Upload Image",
+        "operationId": "upload_image_api_v1_images_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_image_api_v1_images_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/{ref}": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Get Image",
+        "operationId": "get_image_api_v1_images__ref__get",
+        "parameters": [
+          {
+            "name": "ref",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ref"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/{ref}/info": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Get Image Info",
+        "operationId": "get_image_info_api_v1_images__ref__info_get",
+        "parameters": [
+          {
+            "name": "ref",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ref"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/{ref}/thumbnail": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Get Thumbnail",
+        "operationId": "get_thumbnail_api_v1_images__ref__thumbnail_get",
+        "parameters": [
+          {
+            "name": "ref",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ref"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 320,
+              "title": "Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/transform": {
+      "post": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Transform",
+        "description": "Apply size-editor operations to a copy of ``source_ref`` and store the result as a new lossless PNG.",
+        "operationId": "transform_api_v1_images_transform_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransformRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransformResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fonts": {
+      "get": {
+        "tags": [
+          "fonts"
+        ],
+        "summary": "List Fonts",
+        "operationId": "list_fonts_api_v1_fonts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FontOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Fonts Api V1 Fonts Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "fonts"
+        ],
+        "summary": "Upload Font",
+        "operationId": "upload_font_api_v1_fonts_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_font_api_v1_fonts_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FontOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fonts/system": {
+      "get": {
+        "tags": [
+          "fonts"
+        ],
+        "summary": "System Fonts",
+        "operationId": "system_fonts_api_v1_fonts_system_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SystemFont"
+                  },
+                  "type": "array",
+                  "title": "Response System Fonts Api V1 Fonts System Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fonts/system/import": {
+      "post": {
+        "tags": [
+          "fonts"
+        ],
+        "summary": "Import System Font",
+        "operationId": "import_system_font_api_v1_fonts_system_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemFontImport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FontOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fonts/{font_id}/file": {
+      "get": {
+        "tags": [
+          "fonts"
+        ],
+        "summary": "Font File",
+        "operationId": "font_file_api_v1_fonts__font_id__file_get",
+        "parameters": [
+          {
+            "name": "font_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Font Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fonts/{font_id}/metrics": {
+      "get": {
+        "tags": [
+          "fonts"
+        ],
+        "summary": "Font Metrics",
+        "description": "Advance widths and vertical metrics used by the shared text layout (browser == server).",
+        "operationId": "font_metrics_api_v1_fonts__font_id__metrics_get",
+        "parameters": [
+          {
+            "name": "font_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Font Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FontMetricsOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/render/preview": {
+      "post": {
+        "tags": [
+          "render"
+        ],
+        "summary": "Preview",
+        "description": "Render one card at full resolution with the production renderer and return it as PNG.\n\nThe ``X-Render-Report`` header carries per-placeholder info (final font size, overflow, missing glyphs).",
+        "operationId": "preview_api_v1_render_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "image/png": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/render/glyph-check": {
+      "post": {
+        "tags": [
+          "render"
+        ],
+        "summary": "Glyph Check Endpoint",
+        "description": "Scan every record and return, per placeholder, characters that neither its font nor its fallback can draw.",
+        "operationId": "glyph_check_endpoint_api_v1_render_glyph_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GlyphCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlyphCheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs": {
+      "post": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Create Job",
+        "operationId": "create_job_api_v1_jobs_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "List Jobs",
+        "operationId": "list_jobs_api_v1_jobs_get",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobOut"
+                  },
+                  "title": "Response List Jobs Api V1 Jobs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Get Job",
+        "operationId": "get_job_api_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Delete Job",
+        "operationId": "delete_job_api_v1_jobs__job_id__delete",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}/cancel": {
+      "post": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Cancel Job",
+        "operationId": "cancel_job_api_v1_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}/retry": {
+      "post": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Retry Job",
+        "description": "Re-render only the rows that failed, in place (output ZIP is rebuilt).",
+        "operationId": "retry_job_api_v1_jobs__job_id__retry_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}/events": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Job Events",
+        "description": "Server-Sent Events: a ``progress`` event whenever the job changes, ``done`` once it is finished.",
+        "operationId": "job_events_api_v1_jobs__job_id__events_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}/download": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Download",
+        "operationId": "download_api_v1_jobs__job_id__download_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}/images": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "List Images",
+        "operationId": "list_images_api_v1_jobs__job_id__images_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobImage"
+                  },
+                  "title": "Response List Images Api V1 Jobs  Job Id  Images Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}/images/{filename}": {
+      "get": {
+        "tags": [
+          "jobs"
+        ],
+        "summary": "Get Image",
+        "operationId": "get_image_api_v1_jobs__job_id__images__filename__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Filename"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/layout": {
+      "post": {
+        "tags": [
+          "jobs",
+          "pdf"
+        ],
+        "summary": "Pdf Layout",
+        "operationId": "pdf_layout_api_v1_pdf_layout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/jobs": {
+      "post": {
+        "tags": [
+          "jobs",
+          "pdf"
+        ],
+        "summary": "Create Pdf Job",
+        "operationId": "create_pdf_job_api_v1_pdf_jobs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PdfJobCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api V1 Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Binding": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "field",
+              "template"
+            ],
+            "title": "Mode",
+            "default": "field"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          },
+          "template": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Binding",
+        "description": "``field``: value of one data column. ``template``: text with ``{{field}}`` tokens."
+      },
+      "Body_create_dataset_api_v1_datasets_post": {
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "type": "string",
+                "contentMediaType": "application/octet-stream"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text",
+            "description": "Pasted JSON (alternative to a file upload)"
+          },
+          "sheet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sheet",
+            "description": "Excel sheet name (default: first sheet)"
+          }
+        },
+        "type": "object",
+        "title": "Body_create_dataset_api_v1_datasets_post"
+      },
+      "Body_import_template_api_v1_templates_import_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_import_template_api_v1_templates_import_post"
+      },
+      "Body_upload_font_api_v1_fonts_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_font_api_v1_fonts_post"
+      },
+      "Body_upload_image_api_v1_images_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_image_api_v1_images_post"
+      },
+      "Box": {
+        "properties": {
+          "width_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Width Mm"
+          },
+          "height_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Height Mm"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "width_mm",
+          "height_mm"
+        ],
+        "title": "Box"
+      },
+      "CardSlot": {
+        "properties": {
+          "x_mm": {
+            "type": "number",
+            "title": "X Mm"
+          },
+          "y_mm": {
+            "type": "number",
+            "title": "Y Mm"
+          },
+          "width_mm": {
+            "type": "number",
+            "title": "Width Mm"
+          },
+          "height_mm": {
+            "type": "number",
+            "title": "Height Mm"
+          }
+        },
+        "type": "object",
+        "required": [
+          "x_mm",
+          "y_mm",
+          "width_mm",
+          "height_mm"
+        ],
+        "title": "CardSlot"
+      },
+      "CropBox": {
+        "properties": {
+          "x": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Y"
+          },
+          "width": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Width"
+          },
+          "height": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Height"
+          }
+        },
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "title": "CropBox",
+        "description": "Crop rectangle in source pixels (after rotation/flip)."
+      },
+      "DatasetOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "sheets": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sheets"
+          },
+          "sheet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sheet"
+          },
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fields"
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "created_at": {
+            "type": "number",
+            "title": "Created At",
+            "default": 0
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
+          "template_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Template Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "filename",
+          "kind",
+          "sheets",
+          "sheet",
+          "fields",
+          "row_count"
+        ],
+        "title": "DatasetOut"
+      },
+      "DuplicateInfo": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "rows": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "rows"
+        ],
+        "title": "DuplicateInfo"
+      },
+      "DuplicateRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "title": "DuplicateRequest"
+      },
+      "EmptyInfo": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "rows": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "rows"
+        ],
+        "title": "EmptyInfo"
+      },
+      "FontConfig": {
+        "properties": {
+          "font_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Font Id"
+          },
+          "size_pt": {
+            "type": "number",
+            "maximum": 1000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Size Pt",
+            "default": 12
+          },
+          "color": {
+            "type": "string",
+            "title": "Color",
+            "default": "#000000"
+          },
+          "auto_shrink": {
+            "type": "boolean",
+            "title": "Auto Shrink",
+            "default": true
+          },
+          "min_size_pt": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Size Pt",
+            "default": 6
+          },
+          "wrap": {
+            "type": "boolean",
+            "title": "Wrap",
+            "default": false
+          },
+          "letter_spacing": {
+            "type": "number",
+            "title": "Letter Spacing",
+            "default": 0
+          },
+          "line_height": {
+            "type": "number",
+            "maximum": 10.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Line Height",
+            "default": 1.2
+          },
+          "transform": {
+            "type": "string",
+            "enum": [
+              "none",
+              "uppercase",
+              "lowercase",
+              "capitalize"
+            ],
+            "title": "Transform",
+            "default": "none"
+          },
+          "bold": {
+            "type": "boolean",
+            "title": "Bold",
+            "default": false
+          },
+          "italic": {
+            "type": "boolean",
+            "title": "Italic",
+            "default": false
+          },
+          "stroke_width_pt": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Stroke Width Pt",
+            "default": 0
+          },
+          "stroke_color": {
+            "type": "string",
+            "title": "Stroke Color",
+            "default": "#000000"
+          },
+          "shadow": {
+            "$ref": "#/components/schemas/Shadow"
+          },
+          "fallback_font_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fallback Font Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "FontConfig"
+      },
+      "FontMetricsOut": {
+        "properties": {
+          "units_per_em": {
+            "type": "integer",
+            "title": "Units Per Em"
+          },
+          "ascender": {
+            "type": "integer",
+            "title": "Ascender"
+          },
+          "descender": {
+            "type": "integer",
+            "title": "Descender"
+          },
+          "notdef_advance": {
+            "type": "integer",
+            "title": "Notdef Advance"
+          },
+          "advances": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Advances"
+          }
+        },
+        "type": "object",
+        "required": [
+          "units_per_em",
+          "ascender",
+          "descender",
+          "notdef_advance",
+          "advances"
+        ],
+        "title": "FontMetricsOut"
+      },
+      "FontOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "family": {
+            "type": "string",
+            "title": "Family"
+          },
+          "style": {
+            "type": "string",
+            "title": "Style"
+          },
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "family",
+          "style",
+          "filename",
+          "sha256",
+          "source"
+        ],
+        "title": "FontOut"
+      },
+      "GlyphCheckItem": {
+        "properties": {
+          "placeholder_id": {
+            "type": "string",
+            "title": "Placeholder Id"
+          },
+          "missing": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Missing",
+            "description": "Missing character -> number of rows affected"
+          },
+          "rows": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "placeholder_id",
+          "missing",
+          "rows"
+        ],
+        "title": "GlyphCheckItem"
+      },
+      "GlyphCheckRequest": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/TemplateConfig"
+          },
+          "dataset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Id"
+          },
+          "records": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Records"
+          }
+        },
+        "type": "object",
+        "required": [
+          "config"
+        ],
+        "title": "GlyphCheckRequest"
+      },
+      "GlyphCheckResponse": {
+        "properties": {
+          "checked_rows": {
+            "type": "integer",
+            "title": "Checked Rows"
+          },
+          "placeholders": {
+            "items": {
+              "$ref": "#/components/schemas/GlyphCheckItem"
+            },
+            "type": "array",
+            "title": "Placeholders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "checked_rows",
+          "placeholders"
+        ],
+        "title": "GlyphCheckResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageInfo": {
+        "properties": {
+          "ref": {
+            "type": "string",
+            "title": "Ref",
+            "description": "SHA-256 of the stored image"
+          },
+          "width_px": {
+            "type": "integer",
+            "title": "Width Px"
+          },
+          "height_px": {
+            "type": "integer",
+            "title": "Height Px"
+          },
+          "dpi": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dpi"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "has_alpha": {
+            "type": "boolean",
+            "title": "Has Alpha"
+          },
+          "icc_profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icc Profile",
+            "description": "Description of the embedded ICC profile, if any"
+          },
+          "format": {
+            "type": "string",
+            "title": "Format"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ref",
+          "width_px",
+          "height_px",
+          "dpi",
+          "mode",
+          "has_alpha",
+          "format"
+        ],
+        "title": "ImageInfo"
+      },
+      "JobCreate": {
+        "properties": {
+          "template_id": {
+            "type": "integer",
+            "title": "Template Id"
+          },
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "filename_field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename Field"
+          },
+          "rows": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rows"
+          },
+          "empty_policy": {
+            "type": "string",
+            "enum": [
+              "render",
+              "skip",
+              "fill"
+            ],
+            "title": "Empty Policy",
+            "default": "render"
+          },
+          "fill_value": {
+            "type": "string",
+            "title": "Fill Value",
+            "default": ""
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "template_id",
+          "dataset_id"
+        ],
+        "title": "JobCreate"
+      },
+      "JobDetail": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id"
+          },
+          "data_filename": {
+            "type": "string",
+            "title": "Data Filename"
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "progress": {
+            "type": "number",
+            "title": "Progress"
+          },
+          "processed": {
+            "type": "integer",
+            "title": "Processed"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "has_output": {
+            "type": "boolean",
+            "title": "Has Output",
+            "default": false
+          },
+          "error_count": {
+            "type": "integer",
+            "title": "Error Count",
+            "default": 0
+          },
+          "warning_count": {
+            "type": "integer",
+            "title": "Warning Count",
+            "default": 0
+          },
+          "skipped_count": {
+            "type": "integer",
+            "title": "Skipped Count",
+            "default": 0
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/JobError"
+            },
+            "type": "array",
+            "title": "Errors"
+          },
+          "params": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Params"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "template_id",
+          "data_filename",
+          "row_count",
+          "status",
+          "progress",
+          "processed",
+          "created_at",
+          "finished_at",
+          "errors",
+          "params"
+        ],
+        "title": "JobDetail"
+      },
+      "JobError": {
+        "properties": {
+          "row": {
+            "type": "integer",
+            "title": "Row"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "skipped": {
+            "type": "boolean",
+            "title": "Skipped",
+            "default": false
+          },
+          "warning": {
+            "type": "boolean",
+            "title": "Warning",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "row",
+          "message"
+        ],
+        "title": "JobError"
+      },
+      "JobImage": {
+        "properties": {
+          "row": {
+            "type": "integer",
+            "title": "Row"
+          },
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row",
+          "filename"
+        ],
+        "title": "JobImage"
+      },
+      "JobOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Id"
+          },
+          "data_filename": {
+            "type": "string",
+            "title": "Data Filename"
+          },
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "progress": {
+            "type": "number",
+            "title": "Progress"
+          },
+          "processed": {
+            "type": "integer",
+            "title": "Processed"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "has_output": {
+            "type": "boolean",
+            "title": "Has Output",
+            "default": false
+          },
+          "error_count": {
+            "type": "integer",
+            "title": "Error Count",
+            "default": 0
+          },
+          "warning_count": {
+            "type": "integer",
+            "title": "Warning Count",
+            "default": 0
+          },
+          "skipped_count": {
+            "type": "integer",
+            "title": "Skipped Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "template_id",
+          "data_filename",
+          "row_count",
+          "status",
+          "progress",
+          "processed",
+          "created_at",
+          "finished_at"
+        ],
+        "title": "JobOut"
+      },
+      "LayoutRequest": {
+        "properties": {
+          "card_width_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Card Width Mm"
+          },
+          "card_height_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Card Height Mm"
+          },
+          "page_width_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Page Width Mm",
+            "default": 210
+          },
+          "page_height_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Page Height Mm",
+            "default": 297
+          },
+          "margins": {
+            "$ref": "#/components/schemas/Margins"
+          },
+          "gap_mm": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Gap Mm",
+            "default": 0
+          },
+          "allow_rotate": {
+            "type": "boolean",
+            "title": "Allow Rotate",
+            "default": true
+          },
+          "card_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Card Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_width_mm",
+          "card_height_mm"
+        ],
+        "title": "LayoutRequest"
+      },
+      "LayoutResponse": {
+        "properties": {
+          "columns": {
+            "type": "integer",
+            "title": "Columns"
+          },
+          "rows": {
+            "type": "integer",
+            "title": "Rows"
+          },
+          "per_page": {
+            "type": "integer",
+            "title": "Per Page"
+          },
+          "rotated": {
+            "type": "boolean",
+            "title": "Rotated"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages"
+          },
+          "page_width_mm": {
+            "type": "number",
+            "title": "Page Width Mm"
+          },
+          "page_height_mm": {
+            "type": "number",
+            "title": "Page Height Mm"
+          },
+          "slot_width_mm": {
+            "type": "number",
+            "title": "Slot Width Mm"
+          },
+          "slot_height_mm": {
+            "type": "number",
+            "title": "Slot Height Mm"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/CardSlot"
+            },
+            "type": "array",
+            "title": "Slots"
+          }
+        },
+        "type": "object",
+        "required": [
+          "columns",
+          "rows",
+          "per_page",
+          "rotated",
+          "pages",
+          "page_width_mm",
+          "page_height_mm",
+          "slot_width_mm",
+          "slot_height_mm",
+          "slots"
+        ],
+        "title": "LayoutResponse"
+      },
+      "Margins": {
+        "properties": {
+          "top": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Top",
+            "default": 10
+          },
+          "right": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Right",
+            "default": 10
+          },
+          "bottom": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Bottom",
+            "default": 10
+          },
+          "left": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Left",
+            "default": 10
+          }
+        },
+        "type": "object",
+        "title": "Margins"
+      },
+      "OutputConfig": {
+        "properties": {
+          "filename_field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename Field"
+          },
+          "format": {
+            "type": "string",
+            "const": "png",
+            "title": "Format",
+            "default": "png"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "OutputConfig"
+      },
+      "PdfJobCreate": {
+        "properties": {
+          "source_job_id": {
+            "type": "integer",
+            "title": "Source Job Id",
+            "description": "Completed card job whose PNGs are merged"
+          },
+          "layout": {
+            "$ref": "#/components/schemas/LayoutRequest"
+          },
+          "crop_marks": {
+            "type": "boolean",
+            "title": "Crop Marks",
+            "default": true
+          },
+          "bleed_mm": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Bleed Mm",
+            "default": 0
+          },
+          "dpi": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2400.0,
+                "minimum": 72.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dpi",
+            "default": 300
+          },
+          "image_format": {
+            "type": "string",
+            "enum": [
+              "png",
+              "jpeg"
+            ],
+            "title": "Image Format",
+            "default": "png"
+          },
+          "jpeg_quality": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 40.0,
+            "title": "Jpeg Quality",
+            "default": 90
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_job_id",
+          "layout"
+        ],
+        "title": "PdfJobCreate"
+      },
+      "Placeholder": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "default": ""
+          },
+          "binding": {
+            "$ref": "#/components/schemas/Binding"
+          },
+          "x_mm": {
+            "type": "number",
+            "title": "X Mm"
+          },
+          "y_mm": {
+            "type": "number",
+            "title": "Y Mm"
+          },
+          "box": {
+            "$ref": "#/components/schemas/Box"
+          },
+          "align": {
+            "type": "string",
+            "enum": [
+              "left",
+              "center",
+              "right"
+            ],
+            "title": "Align",
+            "default": "left"
+          },
+          "valign": {
+            "type": "string",
+            "enum": [
+              "top",
+              "middle",
+              "bottom"
+            ],
+            "title": "Valign",
+            "default": "top"
+          },
+          "font": {
+            "$ref": "#/components/schemas/FontConfig"
+          },
+          "sample_text": {
+            "type": "string",
+            "title": "Sample Text",
+            "default": ""
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "default": false
+          },
+          "hidden": {
+            "type": "boolean",
+            "title": "Hidden",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "x_mm",
+          "y_mm",
+          "box"
+        ],
+        "title": "Placeholder"
+      },
+      "PreviewRequest": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/TemplateConfig"
+          },
+          "image_ref": {
+            "type": "string",
+            "title": "Image Ref"
+          },
+          "dataset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Id"
+          },
+          "record_index": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record Index"
+          },
+          "record": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record"
+          },
+          "max_width": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Width"
+          }
+        },
+        "type": "object",
+        "required": [
+          "config",
+          "image_ref"
+        ],
+        "title": "PreviewRequest"
+      },
+      "RecordsPage": {
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fields"
+          },
+          "records": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Records"
+          }
+        },
+        "type": "object",
+        "required": [
+          "offset",
+          "limit",
+          "total",
+          "fields",
+          "records"
+        ],
+        "title": "RecordsPage"
+      },
+      "Shadow": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled",
+            "default": false
+          },
+          "color": {
+            "type": "string",
+            "title": "Color",
+            "default": "#00000080"
+          },
+          "offset_x_mm": {
+            "type": "number",
+            "title": "Offset X Mm",
+            "default": 0.3
+          },
+          "offset_y_mm": {
+            "type": "number",
+            "title": "Offset Y Mm",
+            "default": 0.3
+          },
+          "blur_mm": {
+            "type": "number",
+            "title": "Blur Mm",
+            "default": 0.3
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Shadow"
+      },
+      "SizeConfig": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "print_size_only",
+              "resample",
+              "crop_fit"
+            ],
+            "title": "Mode",
+            "default": "print_size_only"
+          },
+          "width_mm": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width Mm",
+            "default": 85.6
+          },
+          "height_mm": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Height Mm",
+            "default": 54.0
+          },
+          "dpi": {
+            "type": "number",
+            "maximum": 4800.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Dpi",
+            "default": 300
+          },
+          "bleed_mm": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Bleed Mm",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SizeConfig"
+      },
+      "SystemFont": {
+        "properties": {
+          "family": {
+            "type": "string",
+            "title": "Family"
+          },
+          "style": {
+            "type": "string",
+            "title": "Style"
+          },
+          "path": {
+            "type": "string",
+            "title": "Path"
+          }
+        },
+        "type": "object",
+        "required": [
+          "family",
+          "style",
+          "path"
+        ],
+        "title": "SystemFont"
+      },
+      "SystemFontImport": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path"
+          }
+        },
+        "type": "object",
+        "required": [
+          "path"
+        ],
+        "title": "SystemFontImport"
+      },
+      "TemplateConfig": {
+        "properties": {
+          "size": {
+            "$ref": "#/components/schemas/SizeConfig"
+          },
+          "placeholders": {
+            "items": {
+              "$ref": "#/components/schemas/Placeholder"
+            },
+            "type": "array",
+            "title": "Placeholders"
+          },
+          "output": {
+            "$ref": "#/components/schemas/OutputConfig"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TemplateConfig"
+      },
+      "TemplateCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "image_ref": {
+            "type": "string",
+            "title": "Image Ref"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "image_ref"
+        ],
+        "title": "TemplateCreate"
+      },
+      "TemplateOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "image_sha256": {
+            "type": "string",
+            "title": "Image Sha256"
+          },
+          "width_px": {
+            "type": "integer",
+            "title": "Width Px"
+          },
+          "height_px": {
+            "type": "integer",
+            "title": "Height Px"
+          },
+          "dpi": {
+            "type": "number",
+            "title": "Dpi"
+          },
+          "width_mm": {
+            "type": "number",
+            "title": "Width Mm"
+          },
+          "height_mm": {
+            "type": "number",
+            "title": "Height Mm"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "is_archived": {
+            "type": "boolean",
+            "title": "Is Archived"
+          },
+          "dataset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Id"
+          },
+          "original_image_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Image Sha256"
+          },
+          "icc_profile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icc Profile"
+          },
+          "config": {
+            "$ref": "#/components/schemas/TemplateConfig"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "created_at",
+          "updated_at",
+          "image_sha256",
+          "width_px",
+          "height_px",
+          "dpi",
+          "width_mm",
+          "height_mm",
+          "version",
+          "is_archived",
+          "original_image_sha256",
+          "icc_profile",
+          "config"
+        ],
+        "title": "TemplateOut"
+      },
+      "TemplateSummary": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "image_sha256": {
+            "type": "string",
+            "title": "Image Sha256"
+          },
+          "width_px": {
+            "type": "integer",
+            "title": "Width Px"
+          },
+          "height_px": {
+            "type": "integer",
+            "title": "Height Px"
+          },
+          "dpi": {
+            "type": "number",
+            "title": "Dpi"
+          },
+          "width_mm": {
+            "type": "number",
+            "title": "Width Mm"
+          },
+          "height_mm": {
+            "type": "number",
+            "title": "Height Mm"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "is_archived": {
+            "type": "boolean",
+            "title": "Is Archived"
+          },
+          "dataset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "created_at",
+          "updated_at",
+          "image_sha256",
+          "width_px",
+          "height_px",
+          "dpi",
+          "width_mm",
+          "height_mm",
+          "version",
+          "is_archived"
+        ],
+        "title": "TemplateSummary"
+      },
+      "TemplateUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "image_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Ref"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_archived": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Archived"
+          },
+          "dataset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Id"
+          }
+        },
+        "type": "object",
+        "title": "TemplateUpdate",
+        "description": "Every save creates a new version when the image or config changes."
+      },
+      "TemplateVersionOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "image_ref": {
+            "type": "string",
+            "title": "Image Ref"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "image_ref",
+          "created_at"
+        ],
+        "title": "TemplateVersionOut"
+      },
+      "TransformRequest": {
+        "properties": {
+          "source_ref": {
+            "type": "string",
+            "title": "Source Ref"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "print_size_only",
+              "resample",
+              "crop_fit"
+            ],
+            "title": "Mode",
+            "default": "print_size_only"
+          },
+          "width_mm": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width Mm"
+          },
+          "height_mm": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Height Mm"
+          },
+          "target_dpi": {
+            "type": "number",
+            "maximum": 4800.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Target Dpi",
+            "default": 300
+          },
+          "rotate": {
+            "type": "integer",
+            "enum": [
+              0,
+              90,
+              180,
+              270
+            ],
+            "title": "Rotate",
+            "default": 0
+          },
+          "flip_h": {
+            "type": "boolean",
+            "title": "Flip H",
+            "default": false
+          },
+          "flip_v": {
+            "type": "boolean",
+            "title": "Flip V",
+            "default": false
+          },
+          "crop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CropBox"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fit": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain"
+            ],
+            "title": "Fit",
+            "default": "cover"
+          },
+          "anchor": {
+            "type": "string",
+            "enum": [
+              "top-left",
+              "top",
+              "top-right",
+              "left",
+              "center",
+              "right",
+              "bottom-left",
+              "bottom",
+              "bottom-right"
+            ],
+            "title": "Anchor",
+            "default": "center"
+          },
+          "pad_color": {
+            "type": "string",
+            "title": "Pad Color",
+            "default": "#FFFFFF"
+          },
+          "bleed_mm": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": -50.0,
+            "title": "Bleed Mm",
+            "default": 0
+          },
+          "bleed_fill": {
+            "type": "string",
+            "enum": [
+              "mirror",
+              "color"
+            ],
+            "title": "Bleed Fill",
+            "default": "mirror"
+          },
+          "background": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Background"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scale_placeholders": {
+            "type": "boolean",
+            "title": "Scale Placeholders",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_ref",
+          "width_mm",
+          "height_mm"
+        ],
+        "title": "TransformRequest"
+      },
+      "TransformResponse": {
+        "properties": {
+          "image": {
+            "$ref": "#/components/schemas/ImageInfo"
+          },
+          "width_mm": {
+            "type": "number",
+            "title": "Width Mm"
+          },
+          "height_mm": {
+            "type": "number",
+            "title": "Height Mm"
+          },
+          "dpi": {
+            "type": "number",
+            "title": "Dpi"
+          },
+          "bleed_mm": {
+            "type": "number",
+            "title": "Bleed Mm"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "image",
+          "width_mm",
+          "height_mm",
+          "dpi",
+          "bleed_mm",
+          "summary",
+          "warnings"
+        ],
+        "title": "TransformResponse"
+      },
+      "ValidateRequest": {
+        "properties": {
+          "required_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Required Fields",
+            "description": "Fields that must not be empty"
+          },
+          "filename_field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename Field"
+          }
+        },
+        "type": "object",
+        "title": "ValidateRequest"
+      },
+      "ValidateResponse": {
+        "properties": {
+          "row_count": {
+            "type": "integer",
+            "title": "Row Count"
+          },
+          "empty": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/EmptyInfo"
+            },
+            "type": "object",
+            "title": "Empty"
+          },
+          "duplicates": {
+            "items": {
+              "$ref": "#/components/schemas/DuplicateInfo"
+            },
+            "type": "array",
+            "title": "Duplicates"
+          },
+          "unmapped_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unmapped Fields"
+          }
+        },
+        "type": "object",
+        "required": [
+          "row_count",
+          "empty",
+          "duplicates",
+          "unmapped_fields"
+        ],
+        "title": "ValidateResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

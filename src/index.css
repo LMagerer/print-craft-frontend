@@ -1,0 +1,75 @@
+@import "@fontsource-variable/nunito";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Palette adapted from the Paces admin theme (default skin). */
+  :root {
+    --background: 228 33% 97%; /* #f6f7fb */
+    --foreground: 240 9% 33%; /* #4c4c5c */
+    --heading: 216 18% 23%; /* #313a46 */
+    --card: 0 0% 100%;
+    --card-foreground: 240 9% 33%;
+    --popover: 0 0% 100%;
+    --primary: 213 70% 46%; /* #236dc9 */
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 214 63% 92%; /* #dee9f7 */
+    --secondary: 216 33% 95%;
+    --secondary-foreground: 216 18% 23%;
+    --muted: 216 33% 95%; /* #eef2f7 */
+    --muted-foreground: 216 15% 56%;
+    --accent: 216 33% 95%;
+    --accent-foreground: 216 18% 23%;
+    --destructive: 345 91% 65%; /* #f7577e */
+    --destructive-foreground: 0 0% 100%;
+    --destructive-soft: 345 93% 95%;
+    --destructive-text: 345 60% 50%;
+    --success: 170 98% 37%; /* #02bc9c */
+    --success-soft: 170 63% 91%;
+    --success-text: 170 98% 30%;
+    --warning: 38 93% 66%; /* #f9bf59 */
+    --warning-soft: 38 95% 95%;
+    --warning-text: 34 80% 38%;
+    --info: 194 69% 62%; /* #5bc3e1 */
+    --info-soft: 194 73% 94%;
+    --info-text: 194 55% 38%;
+    --purple: 245 80% 69%; /* #7b70ef */
+    --purple-soft: 245 87% 95%;
+    --border: 210 9% 91%; /* #e7e9eb */
+    --input: 214 20% 87%;
+    --ring: 213 70% 46%;
+    --sidebar: 233 13% 14%; /* #1e1f27 */
+    --sidebar-foreground: 214 18% 57%; /* #7a8ea7 */
+    --sidebar-hover: 214 17% 22%;
+    --sidebar-active: 213 20% 85%;
+    --radius: 0.4rem;
+  }
+  * {
+    @apply border-border;
+  }
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+  body {
+    @apply bg-background text-[0.875rem] text-foreground antialiased;
+    font-family: "Nunito Variable", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-heading;
+  }
+}
+
+.checkerboard {
+  background-color: #fff;
+  background-image: linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e5e7eb 75%), linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
