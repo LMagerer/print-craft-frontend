@@ -194,7 +194,7 @@ export function GeneratePage() {
             <CardContent className="flex flex-col gap-4">
               <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-md bg-[#f1f3f8] p-3">
                 {template ? (
-                  <img src={fileUrl.thumbnail(template.image_sha256, 480)} alt={template.name} className="max-h-full max-w-full rounded object-contain shadow-[0_4px_14px_rgba(30,31,39,0.18)]" />
+                  <img src={fileUrl.templateThumbnail(template.id, `${template.version}-${template.updated_at}`, 480)} alt={template.name} className="max-h-full max-w-full rounded object-contain shadow-[0_4px_14px_rgba(30,31,39,0.18)]" />
                 ) : (
                   <div className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
                     <LayoutGrid className="size-8 opacity-40" /> No template selected

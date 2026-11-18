@@ -141,6 +141,48 @@
         }
       }
     },
+    "/api/v1/templates/blank": {
+      "post": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Create Blank Template",
+        "description": "Start a design from an empty canvas, or from an uploaded image/PDF that becomes an editable layer.",
+        "operationId": "create_blank_template_api_v1_templates_blank_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlankTemplateCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/templates/import": {
       "post": {
         "tags": [
@@ -488,6 +530,55 @@
               "application/json": {
                 "schema": {}
               }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/templates/{template_id}/thumbnail": {
+      "get": {
+        "tags": [
+          "templates"
+        ],
+        "summary": "Template Thumbnail",
+        "description": "The whole design (all layers, sample text) as a small PNG; cached per image/config/size.",
+        "operationId": "template_thumbnail_api_v1_templates__template_id__thumbnail_get",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Template Id"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 480,
+              "title": "Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "image/png": {}
             }
           },
           "422": {
@@ -972,6 +1063,47 @@
         }
       }
     },
+    "/api/v1/images/{ref}/display": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Get Display",
+        "description": "The image in a form every browser can draw: the original file, or an sRGB PNG for TIFF/CMYK.",
+        "operationId": "get_display_api_v1_images__ref__display_get",
+        "parameters": [
+          {
+            "name": "ref",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ref"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/images/transform": {
       "post": {
         "tags": [
@@ -1000,6 +1132,106 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/photos": {
+      "get": {
+        "tags": [
+          "photos"
+        ],
+        "summary": "List Photos",
+        "operationId": "list_photos_api_v1_photos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PhotoOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Photos Api V1 Photos Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "photos"
+        ],
+        "summary": "Upload Photos",
+        "description": "Upload photos (images, PDFs or ZIPs of them). A photo with the same file name is replaced.",
+        "operationId": "upload_photos_api_v1_photos_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_photos_api_v1_photos_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoUploadResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/photos/{name}": {
+      "delete": {
+        "tags": [
+          "photos"
+        ],
+        "summary": "Delete Photo",
+        "operationId": "delete_photo_api_v1_photos__name__delete",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -1233,7 +1465,7 @@
           "render"
         ],
         "summary": "Preview",
-        "description": "Render one card at full resolution with the production renderer and return it as PNG.\n\nThe ``X-Render-Report`` header carries per-placeholder info (final font size, overflow, missing glyphs).",
+        "description": "Render one card at full resolution with the production renderer and return it as PNG.\n\nThe ``X-Render-Report`` header carries per-placeholder info (final font size, overflow, missing glyphs);\n``X-Render-Warnings`` lists other problems such as photos that were not found.",
         "operationId": "preview_api_v1_render_preview_post",
         "requestBody": {
           "content": {
@@ -1886,6 +2118,82 @@
         "title": "Binding",
         "description": "``field``: value of one data column. ``template``: text with ``{{field}}`` tokens."
       },
+      "BlankTemplateCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          },
+          "width_mm": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width Mm",
+            "default": 85.6
+          },
+          "height_mm": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Height Mm",
+            "default": 54.0
+          },
+          "dpi": {
+            "type": "number",
+            "maximum": 1200.0,
+            "minimum": 50.0,
+            "title": "Dpi",
+            "default": 300
+          },
+          "background": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Background",
+            "default": "#ffffff"
+          },
+          "image_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Ref"
+          },
+          "image_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "BlankTemplateCreate",
+        "description": "A new design. Without ``image_ref`` an empty canvas of the given size; with it, the canvas takes the image's\nsize and the image is added as a layer."
+      },
       "Body_create_dataset_api_v1_datasets_post": {
         "properties": {
           "file": {
@@ -1980,6 +2288,23 @@
           "file"
         ],
         "title": "Body_upload_image_api_v1_images_post"
+      },
+      "Body_upload_photos_api_v1_photos_post": {
+        "properties": {
+          "files": {
+            "items": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream"
+            },
+            "type": "array",
+            "title": "Files"
+          }
+        },
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "title": "Body_upload_photos_api_v1_photos_post"
       },
       "Box": {
         "properties": {
@@ -2482,6 +2807,27 @@
         ],
         "title": "GlyphCheckResponse"
       },
+      "Group": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "Group"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "Group"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2557,6 +2903,55 @@
           "format"
         ],
         "title": "ImageInfo"
+      },
+      "ImageSource": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "static",
+              "field"
+            ],
+            "title": "Mode",
+            "default": "static"
+          },
+          "ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ref"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          },
+          "fit": {
+            "type": "string",
+            "enum": [
+              "fill",
+              "contain",
+              "cover"
+            ],
+            "title": "Fit",
+            "default": "cover"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ImageSource",
+        "description": "``static``: always ``ref``. ``field``: per record, the column value names an uploaded photo (``ref`` is the\neditor sample / fallback)."
       },
       "JobCreate": {
         "properties": {
@@ -2874,6 +3269,121 @@
         ],
         "title": "JobOut"
       },
+      "Layer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "shape"
+            ],
+            "title": "Kind"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": ""
+          },
+          "group_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Id"
+          },
+          "x_mm": {
+            "type": "number",
+            "title": "X Mm",
+            "default": 0
+          },
+          "y_mm": {
+            "type": "number",
+            "title": "Y Mm",
+            "default": 0
+          },
+          "width_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Width Mm",
+            "default": 10
+          },
+          "height_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Height Mm",
+            "default": 10
+          },
+          "rotation": {
+            "type": "number",
+            "maximum": 360.0,
+            "minimum": -360.0,
+            "title": "Rotation",
+            "default": 0
+          },
+          "opacity": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Opacity",
+            "default": 1
+          },
+          "corner_radius_mm": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Corner Radius Mm",
+            "default": 0
+          },
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "default": false
+          },
+          "hidden": {
+            "type": "boolean",
+            "title": "Hidden",
+            "default": false
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ImageSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "shape": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShapeStyle"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind"
+        ],
+        "title": "Layer",
+        "description": "One entry in the design stack (``TemplateConfig.layers``, bottom to top).\n\n``text`` layers only reference a placeholder by id (``id == placeholder id``): its geometry, visibility and lock\nstate live on the placeholder. Image and shape layers carry their own geometry; ``rotation`` is clockwise\ndegrees around the box centre."
+      },
       "LayoutRequest": {
         "properties": {
           "card_width_mm": {
@@ -3100,6 +3610,48 @@
         ],
         "title": "PdfJobCreate"
       },
+      "PhotoOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "ref": {
+            "type": "string",
+            "title": "Ref"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "ref"
+        ],
+        "title": "PhotoOut"
+      },
+      "PhotoUploadResult": {
+        "properties": {
+          "added": {
+            "items": {
+              "$ref": "#/components/schemas/PhotoOut"
+            },
+            "type": "array",
+            "title": "Added"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "added",
+          "errors"
+        ],
+        "title": "PhotoUploadResult"
+      },
       "Placeholder": {
         "properties": {
           "id": {
@@ -3316,6 +3868,53 @@
         "type": "object",
         "title": "Shadow"
       },
+      "ShapeStyle": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "rect",
+              "ellipse",
+              "line"
+            ],
+            "title": "Type",
+            "default": "rect"
+          },
+          "fill": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fill",
+            "default": "#3b82f6"
+          },
+          "stroke": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stroke"
+          },
+          "stroke_width_mm": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Stroke Width Mm",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ShapeStyle"
+      },
       "SizeConfig": {
         "properties": {
           "mode": {
@@ -3402,12 +4001,37 @@
           "size": {
             "$ref": "#/components/schemas/SizeConfig"
           },
+          "background": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Background"
+          },
           "placeholders": {
             "items": {
               "$ref": "#/components/schemas/Placeholder"
             },
             "type": "array",
             "title": "Placeholders"
+          },
+          "layers": {
+            "items": {
+              "$ref": "#/components/schemas/Layer"
+            },
+            "type": "array",
+            "title": "Layers"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            },
+            "type": "array",
+            "title": "Groups"
           },
           "output": {
             "$ref": "#/components/schemas/OutputConfig"

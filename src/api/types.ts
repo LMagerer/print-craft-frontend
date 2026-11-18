@@ -10,6 +10,10 @@ export type Placeholder = TemplateConfig["placeholders"][number];
 export type FontConfig = Placeholder["font"];
 export type Binding = Placeholder["binding"];
 export type SizeConfig = TemplateConfig["size"];
+export type Layer = TemplateConfig["layers"][number];
+export type ImageSource = NonNullable<Layer["image"]>;
+export type ShapeStyle = NonNullable<Layer["shape"]>;
+export type LayerGroup = TemplateConfig["groups"][number];
 export type Record_ = Record<string, string>;
 
 export type TemplateSummary = S["TemplateSummary"];
@@ -30,6 +34,12 @@ export type LayoutRequest = S["LayoutRequest"];
 export type LayoutResponse = S["LayoutResponse"];
 export type PdfJobCreate = S["PdfJobCreate"];
 export type GlyphCheckResponse = S["GlyphCheckResponse"];
+export type BlankTemplateCreate = S["BlankTemplateCreate"];
+
+export interface PhotoEntry {
+  name: string;
+  ref: string;
+}
 
 export interface RenderReport {
   id: string;

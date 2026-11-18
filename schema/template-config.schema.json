@@ -47,6 +47,18 @@
       "type": "object",
       "default": {}
     },
+    "background": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Background"
+    },
     "placeholders": {
       "items": {
         "additionalProperties": false,
@@ -323,6 +335,248 @@
         "type": "object"
       },
       "title": "Placeholders",
+      "type": "array",
+      "default": []
+    },
+    "layers": {
+      "items": {
+        "additionalProperties": false,
+        "description": "One entry in the design stack (``TemplateConfig.layers``, bottom to top).\n\n``text`` layers only reference a placeholder by id (``id == placeholder id``): its geometry, visibility and lock\nstate live on the placeholder. Image and shape layers carry their own geometry; ``rotation`` is clockwise\ndegrees around the box centre.",
+        "properties": {
+          "id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "text",
+              "image",
+              "shape"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "group_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Group Id"
+          },
+          "x_mm": {
+            "default": 0,
+            "title": "X Mm",
+            "type": "number"
+          },
+          "y_mm": {
+            "default": 0,
+            "title": "Y Mm",
+            "type": "number"
+          },
+          "width_mm": {
+            "default": 10,
+            "exclusiveMinimum": 0,
+            "title": "Width Mm",
+            "type": "number"
+          },
+          "height_mm": {
+            "default": 10,
+            "exclusiveMinimum": 0,
+            "title": "Height Mm",
+            "type": "number"
+          },
+          "rotation": {
+            "default": 0,
+            "maximum": 360,
+            "minimum": -360,
+            "title": "Rotation",
+            "type": "number"
+          },
+          "opacity": {
+            "default": 1,
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Opacity",
+            "type": "number"
+          },
+          "corner_radius_mm": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Corner Radius Mm",
+            "type": "number"
+          },
+          "locked": {
+            "default": false,
+            "title": "Locked",
+            "type": "boolean"
+          },
+          "hidden": {
+            "default": false,
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "description": "``static``: always ``ref``. ``field``: per record, the column value names an uploaded photo (``ref`` is the\neditor sample / fallback).",
+                "properties": {
+                  "mode": {
+                    "default": "static",
+                    "enum": [
+                      "static",
+                      "field"
+                    ],
+                    "title": "Mode",
+                    "type": "string"
+                  },
+                  "ref": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Ref"
+                  },
+                  "field": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Field"
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "enum": [
+                      "fill",
+                      "contain",
+                      "cover"
+                    ],
+                    "title": "Fit",
+                    "type": "string"
+                  }
+                },
+                "title": "ImageSource",
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "shape": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "default": "rect",
+                    "enum": [
+                      "rect",
+                      "ellipse",
+                      "line"
+                    ],
+                    "title": "Type",
+                    "type": "string"
+                  },
+                  "fill": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": "#3b82f6",
+                    "title": "Fill"
+                  },
+                  "stroke": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null,
+                    "title": "Stroke"
+                  },
+                  "stroke_width_mm": {
+                    "default": 0,
+                    "maximum": 100,
+                    "minimum": 0,
+                    "title": "Stroke Width Mm",
+                    "type": "number"
+                  }
+                },
+                "title": "ShapeStyle",
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "id",
+          "kind"
+        ],
+        "title": "Layer",
+        "type": "object"
+      },
+      "title": "Layers",
+      "type": "array",
+      "default": []
+    },
+    "groups": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "default": "Group",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "Group",
+        "type": "object"
+      },
+      "title": "Groups",
       "type": "array",
       "default": []
     },

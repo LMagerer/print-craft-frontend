@@ -1,10 +1,9 @@
 import { useShallow } from "zustand/react/shallow";
-import { AlertTriangle, ArrowDown, ArrowUp, Copy, Eye, EyeOff, Lock, Plus, Trash2, Unlock } from "lucide-react";
+import { AlertTriangle, Copy, Eye, EyeOff, Lock, Trash2, Unlock } from "lucide-react";
 import type { Binding, FontConfig, Placeholder } from "@/api/types";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input, NumberInput, Textarea } from "@/components/ui/input";
-import { Field, Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { SwitchField } from "@/components/ui/switch";
 import { Tip } from "@/components/ui/tooltip";
@@ -13,7 +12,6 @@ import { isValidColor, toHex6, withHex6 } from "@/lib/color";
 import type { FontLibrary } from "@/lib/fonts";
 import { tokenSyntaxErrors, validateTokens } from "@/lib/tokens";
 import { fromMm, round, toMm, type Unit } from "@/lib/units";
-import { cn } from "@/lib/utils";
 import { useEditor } from "@/stores/editorStore";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -66,7 +64,6 @@ interface PanelProps {
   dpi: number;
 }
 
-const NO_PLACEHOLDERS: Placeholder[] = [];
 const NO_PLACEHOLDERS_IDS: string[] = [];
 
 export function PlaceholderPanel({ placeholder: p, prepared, lib, fields, unit, dpi }: PanelProps) {
@@ -336,53 +333,6 @@ export function PlaceholderPanel({ placeholder: p, prepared, lib, fields, unit, 
           </div>
         )}
       </Section>
-    </div>
-  );
-}
-
-export function LayerList({ prepared }: { prepared: ReadonlyMap<string, PreparedText> }) {
-  const placeholders = useEditor((s) => s.config?.placeholders ?? NO_PLACEHOLDERS);
-  const selectedId = useEditor((s) => s.selectedId);
-  const select = useEditor((s) => s.select);
-  const move = useEditor((s) => s.movePlaceholder);
-  const add = useEditor((s) => s.addPlaceholder);
-  const update = useEditor((s) => s.updatePlaceholder);
-
-  return (
-    <div className="flex flex-col">
-      <div className="flex items-center justify-between px-3 py-2">
-        <Label>Placeholders (top first)</Label>
-        <Button size="sm" variant="outline" onClick={() => add()}>
-          <Plus /> Add
-        </Button>
-      </div>
-      <ul className="flex flex-col">
-        {[...placeholders].reverse().map((p) => {
-          const prep = prepared.get(p.id);
-          const problem = prep && (prep.layout.overflow || prep.layout.missing.length > 0 || prep.missingFields.length > 0);
-          return (
-            <li
-              key={p.id}
-              className={cn("group flex cursor-pointer items-center gap-1 px-3 py-1 text-sm hover:bg-accent", p.id === selectedId && "bg-accent")}
-              onClick={() => select(p.id)}
-            >
-              <span className={cn("min-w-0 flex-1 truncate", p.hidden && "text-muted-foreground line-through")}>{p.label || p.id}</span>
-              {problem && <Badge variant="destructive">!</Badge>}
-              <button className="opacity-0 group-hover:opacity-100" onClick={(e) => (e.stopPropagation(), update(p.id, { hidden: !p.hidden }))} aria-label="Toggle visibility">
-                {p.hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-              </button>
-              <button className="opacity-0 group-hover:opacity-100" onClick={(e) => (e.stopPropagation(), move(p.id, "up"))} aria-label="Bring forward">
-                <ArrowUp className="h-3.5 w-3.5" />
-              </button>
-              <button className="opacity-0 group-hover:opacity-100" onClick={(e) => (e.stopPropagation(), move(p.id, "down"))} aria-label="Send backward">
-                <ArrowDown className="h-3.5 w-3.5" />
-              </button>
-              {p.locked && <Lock className="h-3 w-3 text-muted-foreground" />}
-            </li>
-          );
-        })}
-        {!placeholders.length && <li className="px-3 py-2 text-xs text-muted-foreground">No placeholders yet. Click “Add” to create one.</li>}
-      </ul>
     </div>
   );
 }

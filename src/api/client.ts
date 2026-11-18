@@ -57,6 +57,8 @@ export async function postForm<T>(path: string, form: FormData): Promise<T> {
 export const fileUrl = {
   image: (ref: string) => `${API_BASE}/images/${ref}`,
   thumbnail: (ref: string, size = 320) => `${API_BASE}/images/${ref}/thumbnail?size=${size}`,
+  display: (ref: string) => `${API_BASE}/images/${ref}/display`,
+  templateThumbnail: (id: number, version: number | string, size = 480) => `${API_BASE}/templates/${id}/thumbnail?size=${size}&v=${encodeURIComponent(String(version))}`,
   font: (id: number) => `${API_BASE}/fonts/${id}/file`,
   templateExport: (id: number) => `${API_BASE}/templates/${id}/export`,
   jobDownload: (id: number) => `${API_BASE}/jobs/${id}/download`,

@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Archive, ArchiveRestore, CalendarClock, CheckCircle2, Copy, Database, Download, FileUp, ImagePlus, LayoutGrid, Loader2, MoreVertical, Pencil, Printer, Search, Trash2, UploadCloud } from "lucide-react";
+import { Archive, ArchiveRestore, CalendarClock, CheckCircle2, Copy, Database, Download, FileUp, LayoutGrid, Loader2, MoreVertical, Pencil, Plus, Printer, Search, Trash2, UploadCloud } from "lucide-react";
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { api, fileUrl, postForm, unwrap } from "@/api/client";
+import { NewTemplateDialog, useCreateFromFile } from "@/features/library/NewTemplateDialog";
 import { qk, useDataset, useJobs, useTemplates, type TemplateListParams } from "@/api/hooks";
-import type { ImageInfo, TemplateSummary } from "@/api/types";
+import type { TemplateSummary } from "@/api/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,8 +21,6 @@ import { StatCard } from "@/components/ui/stat-card";
 import { useSession } from "@/stores/sessionStore";
 import { round } from "@/lib/units";
 import { downloadUrl, formatDate } from "@/lib/utils";
-
-const ACCEPT_IMAGES = ".png,.jpg,.jpeg,.tif,.tiff,.webp,image/png,image/jpeg,image/tiff,image/webp";
 
 function TemplateCard({ t }: { t: TemplateSummary }) {
   const qc = useQueryClient();
@@ -57,7 +56,7 @@ function TemplateCard({ t }: { t: TemplateSummary }) {
   return (
     <Card className="group relative flex flex-col overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover">
       <Link to={`/templates/${t.id}`} className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-[#f1f3f8] p-4">
-        <img src={fileUrl.thumbnail(t.image_sha256, 480)} alt={t.name} className="max-h-full max-w-full rounded object-contain shadow-[0_4px_14px_rgba(30,31,39,0.18)] transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy" />
+        <img src={fileUrl.templateThumbnail(t.id, `${t.version}-${t.updated_at}`, 480)} alt={t.name} className="max-h-full max-w-full rounded object-contain shadow-[0_4px_14px_rgba(30,31,39,0.18)] transition-transform duration-300 group-hover:scale-[1.03]" loading="lazy" />
         <span className="absolute inset-0 flex items-center justify-center bg-sidebar/0 opacity-0 transition-all group-hover:bg-sidebar/35 group-hover:opacity-100">
           <span className="flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-bold text-heading shadow-pop">
             <Pencil className="size-3.5" /> Open editor
@@ -132,20 +131,19 @@ function NewTemplateTile({ onClick, busy }: { onClick: () => void; busy: boolean
       disabled={busy}
       className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-input bg-card/60 p-6 text-center transition-colors hover:border-primary/60 hover:bg-primary-soft/40"
     >
-      <span className="flex size-14 items-center justify-center rounded-full bg-primary-soft text-primary">{busy ? <Loader2 className="size-6 animate-spin" /> : <UploadCloud className="size-6" />}</span>
+      <span className="flex size-14 items-center justify-center rounded-full bg-primary-soft text-primary">{busy ? <Loader2 className="size-6 animate-spin" /> : <Plus className="size-6" />}</span>
       <span className="font-bold text-heading">New template</span>
-      <span className="max-w-48 text-xs text-muted-foreground">Upload or drop a card background (PNG, JPEG, TIFF, WebP)</span>
+      <span className="max-w-52 text-xs text-muted-foreground">Design on a blank canvas, or start from an image or PDF (you can also drop one here)</span>
     </button>
   );
 }
 
 export function LibraryPage() {
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const [params, setParams] = useState<TemplateListParams>({ sort: "updated_at", order: "desc", archived: "exclude" });
   const [search, setSearch] = useState("");
   const { data: templates, isLoading, error } = useTemplates({ ...params, search: search.trim() || undefined });
-  const imageInput = useRef<HTMLInputElement>(null);
+  const [newOpen, setNewOpen] = useState(false);
   const zipInput = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const { data: allTemplates } = useTemplates({ sort: "updated_at", order: "desc", archived: "exclude" });
@@ -156,20 +154,7 @@ export function LibraryPage() {
   const pdfJobs = jobs?.filter((j) => j.kind === "pdf" && j.status.startsWith("completed")) ?? [];
   const cardsMade = cardJobs.reduce((n, j) => n + j.processed - j.error_count - j.skipped_count, 0);
 
-  const create = useMutation({
-    mutationFn: async (file: File) => {
-      const form = new FormData();
-      form.append("file", file);
-      const info = await postForm<ImageInfo>("/images", form);
-      const name = file.name.replace(/\.[^.]+$/, "") || "New template";
-      return unwrap(api.POST("/api/v1/templates", { body: { name, description: "", image_ref: info.ref } }));
-    },
-    onSuccess: (t) => {
-      qc.invalidateQueries({ queryKey: qk.templates });
-      navigate(`/templates/${t.id}`);
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
+  const create = useCreateFromFile();
   const importZip = useMutation({
     mutationFn: (file: File) => {
       const form = new FormData();
@@ -212,23 +197,13 @@ export function LibraryPage() {
             <Button variant="outline" onClick={() => zipInput.current?.click()} disabled={importZip.isPending}>
               {importZip.isPending ? <Loader2 className="animate-spin" /> : <FileUp />} Import .zip
             </Button>
-            <Button onClick={() => imageInput.current?.click()} disabled={create.isPending}>
-              {create.isPending ? <Loader2 className="animate-spin" /> : <ImagePlus />} New template
+            <Button onClick={() => setNewOpen(true)} disabled={create.isPending}>
+              {create.isPending ? <Loader2 className="animate-spin" /> : <Plus />} New template
             </Button>
           </>
         }
       />
-      <input
-        ref={imageInput}
-        type="file"
-        accept={ACCEPT_IMAGES}
-        hidden
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) create.mutate(f);
-          e.target.value = "";
-        }}
-      />
+      <NewTemplateDialog open={newOpen} onOpenChange={setNewOpen} />
       <input
         ref={zipInput}
         type="file"
@@ -301,7 +276,7 @@ export function LibraryPage() {
       ) : (
         templates && (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-5">
-            {params.archived !== "only" && <NewTemplateTile onClick={() => imageInput.current?.click()} busy={create.isPending} />}
+            {params.archived !== "only" && <NewTemplateTile onClick={() => setNewOpen(true)} busy={create.isPending} />}
             {templates.map((t) => (
               <TemplateCard key={t.id} t={t} />
             ))}
@@ -313,7 +288,7 @@ export function LibraryPage() {
         <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-primary/10 backdrop-blur-[1px]">
           <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-dashed border-primary bg-card px-10 py-8 shadow-pop">
             <UploadCloud className="size-10 text-primary" />
-            <p className="font-bold text-heading">Drop an image to create a template</p>
+            <p className="font-bold text-heading">Drop an image or PDF to create a template</p>
             <p className="text-xs text-muted-foreground">or a .zip to import one</p>
           </div>
         </div>

@@ -22,6 +22,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/templates/blank": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Blank Template
+         * @description Start a design from an empty canvas, or from an uploaded image/PDF that becomes an editable layer.
+         */
+        post: operations["create_blank_template_api_v1_templates_blank_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/templates/import": {
         parameters: {
             query?: never;
@@ -118,6 +138,26 @@ export interface paths {
         };
         /** Template Image */
         get: operations["template_image_api_v1_templates__template_id__image_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/templates/{template_id}/thumbnail": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Template Thumbnail
+         * @description The whole design (all layers, sample text) as a small PNG; cached per image/config/size.
+         */
+        get: operations["template_thumbnail_api_v1_templates__template_id__thumbnail_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -284,6 +324,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/images/{ref}/display": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Display
+         * @description The image in a form every browser can draw: the original file, or an sRGB PNG for TIFF/CMYK.
+         */
+        get: operations["get_display_api_v1_images__ref__display_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/images/transform": {
         parameters: {
             query?: never;
@@ -299,6 +359,44 @@ export interface paths {
          */
         post: operations["transform_api_v1_images_transform_post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Photos */
+        get: operations["list_photos_api_v1_photos_get"];
+        put?: never;
+        /**
+         * Upload Photos
+         * @description Upload photos (images, PDFs or ZIPs of them). A photo with the same file name is replaced.
+         */
+        post: operations["upload_photos_api_v1_photos_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/photos/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Photo */
+        delete: operations["delete_photo_api_v1_photos__name__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -406,7 +504,8 @@ export interface paths {
          * Preview
          * @description Render one card at full resolution with the production renderer and return it as PNG.
          *
-         *     The ``X-Render-Report`` header carries per-placeholder info (final font size, overflow, missing glyphs).
+         *     The ``X-Render-Report`` header carries per-placeholder info (final font size, overflow, missing glyphs);
+         *     ``X-Render-Warnings`` lists other problems such as photos that were not found.
          */
         post: operations["preview_api_v1_render_preview_post"];
         delete?: never;
@@ -650,6 +749,44 @@ export interface components {
             /** Template */
             template?: string | null;
         };
+        /**
+         * BlankTemplateCreate
+         * @description A new design. Without ``image_ref`` an empty canvas of the given size; with it, the canvas takes the image's
+         *     size and the image is added as a layer.
+         */
+        BlankTemplateCreate: {
+            /** Name */
+            name: string;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /**
+             * Width Mm
+             * @default 85.6
+             */
+            width_mm: number;
+            /**
+             * Height Mm
+             * @default 54
+             */
+            height_mm: number;
+            /**
+             * Dpi
+             * @default 300
+             */
+            dpi: number;
+            /**
+             * Background
+             * @default #ffffff
+             */
+            background: string | null;
+            /** Image Ref */
+            image_ref?: string | null;
+            /** Image Name */
+            image_name?: string | null;
+        };
         /** Body_create_dataset_api_v1_datasets_post */
         Body_create_dataset_api_v1_datasets_post: {
             /** File */
@@ -681,6 +818,11 @@ export interface components {
         Body_upload_image_api_v1_images_post: {
             /** File */
             file: string;
+        };
+        /** Body_upload_photos_api_v1_photos_post */
+        Body_upload_photos_api_v1_photos_post: {
+            /** Files */
+            files: string[];
         };
         /** Box */
         Box: {
@@ -891,6 +1033,16 @@ export interface components {
             /** Placeholders */
             placeholders: components["schemas"]["GlyphCheckItem"][];
         };
+        /** Group */
+        Group: {
+            /** Id */
+            id: string;
+            /**
+             * Name
+             * @default Group
+             */
+            name: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -920,6 +1072,29 @@ export interface components {
             icc_profile?: string | null;
             /** Format */
             format: string;
+        };
+        /**
+         * ImageSource
+         * @description ``static``: always ``ref``. ``field``: per record, the column value names an uploaded photo (``ref`` is the
+         *     editor sample / fallback).
+         */
+        ImageSource: {
+            /**
+             * Mode
+             * @default static
+             * @enum {string}
+             */
+            mode: "static" | "field";
+            /** Ref */
+            ref?: string | null;
+            /** Field */
+            field?: string | null;
+            /**
+             * Fit
+             * @default cover
+             * @enum {string}
+             */
+            fit: "fill" | "contain" | "cover";
         };
         /** JobCreate */
         JobCreate: {
@@ -1066,6 +1241,77 @@ export interface components {
              */
             skipped_count: number;
         };
+        /**
+         * Layer
+         * @description One entry in the design stack (``TemplateConfig.layers``, bottom to top).
+         *
+         *     ``text`` layers only reference a placeholder by id (``id == placeholder id``): its geometry, visibility and lock
+         *     state live on the placeholder. Image and shape layers carry their own geometry; ``rotation`` is clockwise
+         *     degrees around the box centre.
+         */
+        Layer: {
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "text" | "image" | "shape";
+            /**
+             * Name
+             * @default
+             */
+            name: string;
+            /** Group Id */
+            group_id?: string | null;
+            /**
+             * X Mm
+             * @default 0
+             */
+            x_mm: number;
+            /**
+             * Y Mm
+             * @default 0
+             */
+            y_mm: number;
+            /**
+             * Width Mm
+             * @default 10
+             */
+            width_mm: number;
+            /**
+             * Height Mm
+             * @default 10
+             */
+            height_mm: number;
+            /**
+             * Rotation
+             * @default 0
+             */
+            rotation: number;
+            /**
+             * Opacity
+             * @default 1
+             */
+            opacity: number;
+            /**
+             * Corner Radius Mm
+             * @default 0
+             */
+            corner_radius_mm: number;
+            /**
+             * Locked
+             * @default false
+             */
+            locked: boolean;
+            /**
+             * Hidden
+             * @default false
+             */
+            hidden: boolean;
+            image?: components["schemas"]["ImageSource"] | null;
+            shape?: components["schemas"]["ShapeStyle"] | null;
+        };
         /** LayoutRequest */
         LayoutRequest: {
             /** Card Width Mm */
@@ -1191,6 +1437,20 @@ export interface components {
              */
             jpeg_quality: number;
         };
+        /** PhotoOut */
+        PhotoOut: {
+            /** Name */
+            name: string;
+            /** Ref */
+            ref: string;
+        };
+        /** PhotoUploadResult */
+        PhotoUploadResult: {
+            /** Added */
+            added: components["schemas"]["PhotoOut"][];
+            /** Errors */
+            errors: string[];
+        };
         /** Placeholder */
         Placeholder: {
             /** Id */
@@ -1294,6 +1554,27 @@ export interface components {
              */
             blur_mm: number;
         };
+        /** ShapeStyle */
+        ShapeStyle: {
+            /**
+             * Type
+             * @default rect
+             * @enum {string}
+             */
+            type: "rect" | "ellipse" | "line";
+            /**
+             * Fill
+             * @default #3b82f6
+             */
+            fill: string | null;
+            /** Stroke */
+            stroke?: string | null;
+            /**
+             * Stroke Width Mm
+             * @default 0
+             */
+            stroke_width_mm: number;
+        };
         /** SizeConfig */
         SizeConfig: {
             /**
@@ -1340,8 +1621,14 @@ export interface components {
         /** TemplateConfig */
         TemplateConfig: {
             size?: components["schemas"]["SizeConfig"];
+            /** Background */
+            background?: string | null;
             /** Placeholders */
             placeholders?: components["schemas"]["Placeholder"][];
+            /** Layers */
+            layers?: components["schemas"]["Layer"][];
+            /** Groups */
+            groups?: components["schemas"]["Group"][];
             output?: components["schemas"]["OutputConfig"];
         };
         /** TemplateCreate */
@@ -1669,6 +1956,39 @@ export interface operations {
             };
         };
     };
+    create_blank_template_api_v1_templates_blank_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlankTemplateCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     import_template_api_v1_templates_import_post: {
         parameters: {
             query?: never;
@@ -1913,6 +2233,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    template_thumbnail_api_v1_templates__template_id__thumbnail_get: {
+        parameters: {
+            query?: {
+                size?: number;
+            };
+            header?: never;
+            path: {
+                template_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": unknown;
                 };
             };
             /** @description Validation Error */
@@ -2267,6 +2620,37 @@ export interface operations {
             };
         };
     };
+    get_display_api_v1_images__ref__display_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ref: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     transform_api_v1_images_transform_post: {
         parameters: {
             query?: never;
@@ -2288,6 +2672,88 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["TransformResponse"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_photos_api_v1_photos_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoOut"][];
+                };
+            };
+        };
+    };
+    upload_photos_api_v1_photos_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_photos_api_v1_photos_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoUploadResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_photo_api_v1_photos__name__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

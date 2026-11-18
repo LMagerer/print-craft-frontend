@@ -1,23 +1,32 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Circle,
   Download,
   FileStack,
+  Group as GroupIcon,
   History,
+  Image as ImageIcon,
   Link2,
   Loader2,
   Magnet,
-  Plus,
+  Minus,
   Redo2,
   Save,
   Scaling,
   ScanEye,
+  Shapes,
+  Square,
   SquareDashed,
+  SquareUser,
+  Type,
   Undo2,
+  Ungroup,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { api, API_BASE, ApiError, errorMessage, fileUrl, unwrap } from "@/api/client";
@@ -32,16 +41,19 @@ import { Select } from "@/components/ui/select";
 import { Tip } from "@/components/ui/tooltip";
 import { CardCanvas, type ViewOptions } from "@/features/editor/CardCanvas";
 import { MappingDialog } from "@/features/editor/MappingDialog";
-import { LayerList, PlaceholderPanel } from "@/features/editor/PlaceholderPanel";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ACCEPT_IMAGES_PDF, CanvasPanel, imageSizeMm, LayerPanel, LayersPanel, MultiPanel, uploadImage } from "@/features/editor/LayerPanels";
+import { PlaceholderPanel } from "@/features/editor/PlaceholderPanel";
 import { SizeDialog } from "@/features/editor/SizeDialog";
 import { useCardFonts } from "@/features/editor/useCardFonts";
+import { useLayerImages, usePhotos } from "@/features/editor/useLayerImages";
 import { displayUrl, useHtmlImage } from "@/features/editor/useTemplateImage";
 import { VersionsDialog } from "@/features/editor/VersionsDialog";
 import { prepareText, scaleFor, type PreparedText } from "@/lib/cardPainter";
 import { tokenSyntaxErrors, validateTokens } from "@/lib/tokens";
 import { round, sizeSummary, type Unit } from "@/lib/units";
 import { cn, downloadUrl } from "@/lib/utils";
-import { isDirty, useEditor } from "@/stores/editorStore";
+import { elementOf, isDirty, useEditor } from "@/stores/editorStore";
 import { useSession } from "@/stores/sessionStore";
 
 const NUDGE_MM = 0.5;
@@ -54,9 +66,10 @@ function isTyping(e: KeyboardEvent) {
 
 /** Server-rendered preview (exact Pillow output), debounced. */
 function useExactPreview(enabled: boolean, config: TemplateConfig | null, imageRef: string | null, record: Record<string, string> | null) {
-  const [state, setState] = useState<{ image: HTMLImageElement | null; report: RenderReport[]; loading: boolean; error: string | null }>({
+  const [state, setState] = useState<{ image: HTMLImageElement | null; report: RenderReport[]; warnings: string[]; loading: boolean; error: string | null }>({
     image: null,
     report: [],
+    warnings: [],
     loading: false,
     error: null,
   });
@@ -64,7 +77,7 @@ function useExactPreview(enabled: boolean, config: TemplateConfig | null, imageR
 
   useEffect(() => {
     if (!body) {
-      setState({ image: null, report: [], loading: false, error: null });
+      setState({ image: null, report: [], warnings: [], loading: false, error: null });
       return;
     }
     const ctrl = new AbortController();
@@ -75,11 +88,12 @@ function useExactPreview(enabled: boolean, config: TemplateConfig | null, imageR
         const res = await fetch(`${API_BASE}/render/preview`, { method: "POST", headers: { "Content-Type": "application/json" }, body, signal: ctrl.signal });
         if (!res.ok) throw new ApiError(errorMessage(await res.json().catch(() => null), res.statusText), res.status);
         const report = JSON.parse(decodeURIComponent(res.headers.get("X-Render-Report") ?? "%5B%5D")) as RenderReport[];
+        const warnings = JSON.parse(decodeURIComponent(res.headers.get("X-Render-Warnings") ?? "%5B%5D")) as string[];
         url = URL.createObjectURL(await res.blob());
         const img = new Image();
         img.src = url;
         await img.decode();
-        if (!ctrl.signal.aborted) setState({ image: img, report, loading: false, error: null });
+        if (!ctrl.signal.aborted) setState({ image: img, report, warnings, loading: false, error: null });
       } catch (e) {
         if (!ctrl.signal.aborted) setState((s) => ({ ...s, loading: false, error: (e as Error).message }));
       }
@@ -104,10 +118,13 @@ export function EditorPage() {
 
   const config = useEditor((s) => s.config);
   const selectedId = useEditor((s) => s.selectedId);
+  const selectedIds = useEditor((s) => s.selectedIds);
   const dirtyConfig = useEditor(isDirty);
   const canUndo = useEditor((s) => s.past.length > 0);
   const canRedo = useEditor((s) => s.future.length > 0);
-  const { load, undo, redo, select, addPlaceholder, removePlaceholder, duplicatePlaceholder, updatePlaceholder, markSaved, apply } = useEditor.getState();
+  const { load, undo, redo, select, setSelection, addPlaceholder, addLayer, removeElements, duplicateElements, moveBy, group, ungroup, markSaved, apply } = useEditor.getState();
+  const imageInput = useRef<HTMLInputElement>(null);
+  const [adding, setAdding] = useState(false);
 
   const [meta, setMeta] = useState({ name: "", description: "" });
   const [loadedVersion, setLoadedVersion] = useState<string | null>(null);
@@ -157,6 +174,8 @@ export function EditorPage() {
     staleTime: Infinity,
   });
   const { image } = useHtmlImage(displayUrl(imageInfo));
+  const photos = usePhotos();
+  const layerImages = useLayerImages(config, record, photos);
   const { metrics, ready: fontsReady, error: fontError } = useCardFonts(config, lib);
 
   const scale = useMemo(() => (config && template ? scaleFor(config, template.width_px) : { pxPerMm: 1, dpi: 25.4 }), [config, template]);
@@ -218,27 +237,76 @@ export function EditorPage() {
       } else if (mod && e.key.toLowerCase() === "y") {
         e.preventDefault();
         redo();
-      } else if (mod && e.key.toLowerCase() === "d" && selectedId) {
+      } else if (mod && e.key.toLowerCase() === "d" && selectedIds.length) {
         e.preventDefault();
-        duplicatePlaceholder(selectedId);
-      } else if ((e.key === "Delete" || e.key === "Backspace") && selectedId) {
+        duplicateElements(selectedIds);
+      } else if (mod && e.key.toLowerCase() === "g" && selectedIds.length) {
         e.preventDefault();
-        removePlaceholder(selectedId);
+        if (e.shiftKey) ungroup(selectedIds);
+        else group(selectedIds);
+      } else if (mod && e.key.toLowerCase() === "a") {
+        e.preventDefault();
+        const c = useEditor.getState().config;
+        if (c) setSelection(c.layers.map((l) => l.id).filter((x) => !elementOf(c, x)?.locked));
+      } else if ((e.key === "Delete" || e.key === "Backspace") && selectedIds.length) {
+        e.preventDefault();
+        removeElements(selectedIds);
       } else if (e.key === "Escape") {
         select(null);
-      } else if (e.key.startsWith("Arrow") && selectedId) {
-        const p = useEditor.getState().config?.placeholders.find((q) => q.id === selectedId);
-        if (!p || p.locked) return;
+      } else if (e.key.startsWith("Arrow") && selectedIds.length) {
         e.preventDefault();
         const d = e.shiftKey ? NUDGE_BIG_MM : e.altKey ? 0.1 : NUDGE_MM;
         const dx = e.key === "ArrowLeft" ? -d : e.key === "ArrowRight" ? d : 0;
         const dy = e.key === "ArrowUp" ? -d : e.key === "ArrowDown" ? d : 0;
-        updatePlaceholder(selectedId, { x_mm: round(p.x_mm + dx, 3), y_mm: round(p.y_mm + dy, 3) }, `nudge:${selectedId}`);
+        moveBy(selectedIds, dx, dy, `nudge:${selectedIds.join(",")}`);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [dialog, duplicatePlaceholder, redo, removePlaceholder, save, select, selectedId, undo, updatePlaceholder]);
+  }, [dialog, duplicateElements, group, moveBy, redo, removeElements, save, select, selectedIds, setSelection, undo, ungroup]);
+
+  const center = (w: number, h: number) =>
+    config ? { x_mm: round(config.size.width_mm / 2 - w / 2, 2), y_mm: round(config.size.height_mm / 2 - h / 2, 2), width_mm: w, height_mm: h } : {};
+  const addText = (fixed: boolean) => {
+    if (!config) return;
+    const w = Math.min(40, config.size.width_mm * 0.6);
+    const g = center(w, 8);
+    addPlaceholder({
+      x_mm: g.x_mm,
+      y_mm: g.y_mm,
+      box: { width_mm: w, height_mm: 8 },
+      label: fixed ? "Text" : "Field",
+      ...(fixed ? { binding: { mode: "template", field: null, template: "Text" } } : {}),
+    });
+  };
+  const addShape = (type: "rect" | "ellipse" | "line") => {
+    if (!config) return;
+    const w = round(Math.min(config.size.width_mm, config.size.height_mm) * 0.4, 2);
+    const h = type === "line" ? 2 : w;
+    addLayer({
+      kind: "shape",
+      ...center(w, h),
+      shape: type === "line" ? { type, fill: null, stroke: "#000000", stroke_width_mm: 0.5 } : { type, fill: "#3b82f6", stroke: null, stroke_width_mm: 0 },
+    });
+  };
+  const addPhotoField = () => {
+    if (!config) return;
+    const h = round(config.size.height_mm * 0.6, 2);
+    addLayer({ kind: "image", ...center(round(h * 0.8, 2), h), image: { mode: "field", ref: null, field: fields[0] ?? null, fit: "cover" } });
+  };
+  const addImageFile = async (file: File) => {
+    if (!config) return;
+    setAdding(true);
+    try {
+      const info = await uploadImage(file);
+      const { w, h } = imageSizeMm(info, config.size.width_mm * 0.8, config.size.height_mm * 0.8);
+      addLayer({ kind: "image", name: file.name.replace(/\.[^.]+$/, ""), ...center(w, h), image: { mode: "static", ref: info.ref, field: null, fit: "fill" } });
+    } catch (e) {
+      toast.error(`Image upload failed: ${(e as Error).message}`);
+    } finally {
+      setAdding(false);
+    }
+  };
 
   const glyphCheck = useMutation({
     mutationFn: () => unwrap(api.POST("/api/v1/render/glyph-check", { body: { config: config as never, dataset_id: datasetId } })),
@@ -268,6 +336,7 @@ export function EditorPage() {
   }
 
   const selected = config.placeholders.find((p) => p.id === selectedId) ?? null;
+  const selectedEl = selectedId ? elementOf(config, selectedId) : null;
   const problems = [...prepared.values()].filter((p) => !p.placeholder.hidden && (p.layout.overflow || p.layout.missing.length || p.missingFields.length));
   const filenamePattern = config.output.filename_field ?? "";
   const filenameUnknown = fields.length && filenamePattern ? (filenamePattern.includes("{{") ? validateTokens(filenamePattern, fields) : fields.includes(filenamePattern) ? [] : [filenamePattern]) : [];
@@ -301,9 +370,77 @@ export function EditorPage() {
             <Redo2 />
           </Button>
         </Tip>
-        <Button size="sm" variant="ghost" onClick={() => addPlaceholder({ x_mm: round(config.size.width_mm / 2 - 20, 2), y_mm: round(config.size.height_mm / 2 - 4, 2) })}>
-          <Plus /> Placeholder
-        </Button>
+        <div className="mx-1 h-6 w-px bg-border" />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="ghost">
+              <Type /> Text <ChevronDown className="opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem onSelect={() => addText(false)}>
+              <Link2 /> Data field
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => addText(true)}>
+              <Type /> Fixed text
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="ghost" disabled={adding}>
+              {adding ? <Loader2 className="animate-spin" /> : <ImageIcon />} Image <ChevronDown className="opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem onSelect={() => imageInput.current?.click()}>
+              <ImageIcon /> Upload image or PDF…
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={addPhotoField}>
+              <SquareUser /> Photo from data (per row)
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <input
+          ref={imageInput}
+          type="file"
+          accept={ACCEPT_IMAGES_PDF}
+          hidden
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) void addImageFile(f);
+            e.target.value = "";
+          }}
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="ghost">
+              <Shapes /> Shape <ChevronDown className="opacity-60" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem onSelect={() => addShape("rect")}>
+              <Square /> Rectangle
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => addShape("ellipse")}>
+              <Circle /> Ellipse
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => addShape("line")}>
+              <Minus /> Line
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Tip content="Group selection (Ctrl+G)">
+          <Button size="icon" variant="ghost" onClick={() => group(selectedIds)} disabled={selectedIds.length < 2}>
+            <GroupIcon />
+          </Button>
+        </Tip>
+        <Tip content="Ungroup (Ctrl+Shift+G)">
+          <Button size="icon" variant="ghost" onClick={() => ungroup(selectedIds)} disabled={!selectedIds.some((x) => elementOf(config, x)?.groupId)}>
+            <Ungroup />
+          </Button>
+        </Tip>
+        <div className="mx-1 h-6 w-px bg-border" />
         <Button size="sm" variant="ghost" onClick={() => setDialog("mapping")}>
           <Link2 /> Mapping
         </Button>
@@ -407,7 +544,7 @@ export function EditorPage() {
               </datalist>
             </Field>
           </div>
-          <LayerList prepared={prepared} />
+          <LayersPanel prepared={prepared} />
           <div className="mt-auto flex flex-col gap-2 border-t p-3 text-xs">
             {fontError && <p className="text-destructive-text">Font loading failed: {fontError}</p>}
             {!fontsReady && <p className="text-muted-foreground">Loading fonts…</p>}
@@ -429,6 +566,12 @@ export function EditorPage() {
               </div>
             )}
             {exact && exactPreview.error && <p className="text-destructive-text">Preview failed: {exactPreview.error}</p>}
+            {exact &&
+              exactPreview.warnings.map((w) => (
+                <p key={w} className="text-warning-text">
+                  {w}
+                </p>
+              ))}
             {exact && exactPreview.report.some((r) => r.overflow || r.missing_glyphs.length) && (
               <div className="rounded border p-2">
                 <p className="font-medium">Server render report</p>
@@ -453,20 +596,25 @@ export function EditorPage() {
             image={image}
             exactImage={exact ? exactPreview.image : null}
             prepared={fontsReady ? prepared : new Map()}
+            layerImages={layerImages}
             scale={scale}
             view={view}
           />
           <div className="pointer-events-none absolute bottom-3 left-8 right-48 truncate rounded-full bg-card/90 px-3 py-1 text-[11px] shadow-card text-muted-foreground">
-            Drag to move · handles resize · arrows nudge 0.5 mm (Shift 5 mm, Alt 0.1 mm) · Space+drag or scroll to pan · Ctrl+scroll to zoom
+            Drag to move · Shift-click or drag a box to multi-select · arrows nudge 0.5 mm (Shift 5 mm, Alt 0.1 mm) · Space+drag or scroll to pan · Ctrl+scroll to zoom
           </div>
         </div>
 
         {/* Right: properties */}
         <aside className="w-80 shrink-0 overflow-y-auto border-l bg-card">
-          {selected ? (
+          {selectedIds.length > 1 ? (
+            <MultiPanel ids={selectedIds} />
+          ) : selected ? (
             <PlaceholderPanel key={selected.id} placeholder={selected} prepared={prepared.get(selected.id)} lib={lib} fields={fields} unit={unit} dpi={scale.dpi} />
+          ) : selectedEl ? (
+            <LayerPanel key={selectedEl.id} el={selectedEl} unit={unit} dpi={scale.dpi} fields={fields} record={record} photos={photos} layerImage={layerImages.get(selectedEl.id)} />
           ) : (
-            <div className="p-4 text-sm text-muted-foreground">Select a placeholder on the card or in the list to edit it.</div>
+            <CanvasPanel config={config} />
           )}
         </aside>
       </div>
